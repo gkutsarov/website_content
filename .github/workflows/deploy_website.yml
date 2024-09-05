@@ -1,0 +1,26 @@
+name: Deploy website to server
+
+on:
+  push:
+    # Trigger action when any files in the repository are changed
+    paths:
+      - '**'  # Matches all files in the repository
+    branches:
+      - main  # Trigger only on the main branch (adjust if needed)
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Upload files via SSH
+        uses: appleboy/scp-action@v0.1.0
+        with:
+          host: ${{ secrets.SERVER_IP }}                 # Your server IP or domain stored in GitHub Secrets
+          username: ubuntu                               # SSH username stored in GitHub Secrets
+          key: ${{ secrets.TLS_CERTIFICATE_PRIVATE }}    # SSH private key stored in GitHub Secrets
+          source: "."                                    # Upload everything from the current directory (root of the repo)
+          target: "/var/www/gkutsarov"                      # Directory on the server where files should be uploaded
